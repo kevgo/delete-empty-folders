@@ -20,50 +20,29 @@ fn main() -> io::Result<()> {
 
 /// Deletes empty directories under `dir`, depth-first. Never removes `root` itself.
 fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
-    let entries = match fs::read_dir(dir) {
-        Ok(entries) => entries,
-        Err(e) if e.kind() == io::ErrorKind::PermissionDenied => {
-            eprintln!("cannot list (permission denied): {}", dir.display());
-            return Ok(());
-        }
-        Err(e) => return Err(e),
-    };
-
-    let mut contains_files = false;
-
+    let entries = fs::read_dir(dir)?;
+    let mut has_children = false;
     for entry in entries {
-        contains_files = true;
-        let entry = match entry {
-            Ok(e) => e,
-            Err(e) if e.kind() == io::ErrorKind::PermissionDenied => {
-                eprintln!("cannot read (permission denied): {}", dir.display());
-                continue;
-            }
-            Err(e) => return Err(e),
-        };
-        let path = entry.path();
+        has_children = true;
+        let entry = entry?;
         let Ok(filetype) = entry.file_type() else {
             continue;
         };
-        if filetype.is_dir() {
-            if skip_directory(&path) {
-                continue;
-            }
-            remove_empty_descendants(&path, root)?;
+        if !filetype.is_dir() {
+            continue;
         }
+        let path = entry.path();
+        if skip_directory(&path) {
+            continue;
+        }
+        remove_empty_descendants(&path, root)?;
     }
 
-    if dir != root && !contains_files {
-        let relative_path = dir.strip_prefix(root).unwrap_or(dir);
-        println!("removing empty directory: {}", relative_path.display());
-        match fs::remove_dir(dir) {
-            Ok(()) => {}
-            Err(e) if e.kind() == io::ErrorKind::PermissionDenied => {
-                eprintln!("cannot remove (permission denied): {}", dir.display());
-            }
-            Err(e) => return Err(e),
-        }
+    if dir == root || has_children {
+        return Ok(());
     }
 
-    Ok(())
+    let relative_path = dir.strip_prefix(root).unwrap_or(dir);
+    println!("removing empty directory: {}", relative_path.display());
+    fs::remove_dir(dir)
 }
