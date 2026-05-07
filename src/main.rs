@@ -34,12 +34,12 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
             Err(e) => return Err(e),
         };
 
-        let ft = match entry.file_type() {
+        let filetype = match entry.file_type() {
             Ok(ft) => ft,
             Err(_) => continue,
         };
 
-        if ft.is_dir() {
+        if filetype.is_dir() {
             remove_empty_descendants(&entry.path(), root)?;
         }
     }
