@@ -24,6 +24,8 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
         Err(e) => return Err(e),
     };
 
+    let mut has_remaining = false;
+
     for entry in entries {
         let entry = match entry {
             Ok(e) => e,
@@ -34,17 +36,26 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
             Err(e) => return Err(e),
         };
 
+        let path = entry.path();
         let filetype = match entry.file_type() {
             Ok(ft) => ft,
-            Err(_) => continue,
+            Err(_) => {
+                has_remaining = true;
+                continue;
+            }
         };
 
         if filetype.is_dir() {
-            remove_empty_descendants(&entry.path(), root)?;
+            remove_empty_descendants(&path, root)?;
+            if path.exists() {
+                has_remaining = true;
+            }
+        } else {
+            has_remaining = true;
         }
     }
 
-    if dir != root && is_dir_empty(dir)? {
+    if dir != root && !has_remaining {
         match fs::remove_dir(dir) {
             Ok(()) => {}
             Err(e) if e.kind() == io::ErrorKind::PermissionDenied => {
@@ -55,8 +66,4 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
     }
 
     Ok(())
-}
-
-fn is_dir_empty(dir: &Path) -> io::Result<bool> {
-    Ok(fs::read_dir(dir)?.next().is_none())
 }
