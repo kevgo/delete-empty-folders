@@ -53,6 +53,7 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
         }
     }
 
+    println!("dir: {} {}", dir.display(), contains_files);
     if dir != root && !contains_files {
         match fs::remove_dir(dir) {
             Ok(()) => {}
