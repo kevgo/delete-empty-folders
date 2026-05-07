@@ -6,4 +6,5 @@ edition = "2024"
 [dependencies]
 
 [dev-dependencies]
+indoc = "2.0.7"
 tempfile = "3"

@@ -1,21 +1,30 @@
 //! Integration tests: temp workspace, synthetic trees, then verify filesystem results.
 
+use indoc::indoc;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-
 use tempfile::TempDir;
 
-fn mkdir(p: &Path) {
-    fs::create_dir_all(p).unwrap();
+fn mkdir(relative: &str, root: &Path) -> PathBuf {
+    let path = parse_path(relative, root);
+    fs::create_dir_all(&path).unwrap();
+    path
 }
 
-fn touch(p: &Path) {
-    if let Some(parent) = p.parent() {
+fn touch(relative: &str, root: &Path) -> PathBuf {
+    let path = parse_path(relative, root);
+    if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).unwrap();
     }
-    fs::write(p, b"x").unwrap();
+    fs::write(&path, b"x").unwrap();
+    path
+}
+
+fn parse_path(p: &str, root: &Path) -> PathBuf {
+    let full_path = root.join(p);
+    PathBuf::from(full_path)
 }
 
 fn assert_dir_exists(path: &Path) {
@@ -50,11 +59,11 @@ fn cli_executable() -> PathBuf {
     result
 }
 
-fn run_cli(root: &Path) -> io::Result<()> {
+fn run_cli(root: &Path) -> io::Result<String> {
     let exe = cli_executable();
-    let status = Command::new(&exe).current_dir(root).status()?;
-    assert!(status.success());
-    Ok(())
+    let output = Command::new(&exe).current_dir(root).output()?;
+    assert!(output.status.success());
+    Ok(String::from_utf8(output.stdout).unwrap())
 }
 
 // #[test]
@@ -127,17 +136,24 @@ fn run_cli(root: &Path) -> io::Result<()> {
 // }
 
 #[test]
-fn binary_deletes_empty_descendants_from_current_dir() -> io::Result<()> {
+fn binary_deletes_nested_empty_folders() -> io::Result<()> {
     let root = workspace();
-    mkdir(&root.path().join("x").join("y"));
-    touch(&root.path().join("z").join("README"));
-    let z = root.path().join("z");
+    let root_path = root.path();
+    let folder_with_empty_subfolder = root_path.join("folder");
+    let empty_subfolder = folder_with_empty_subfolder.join("empty_subfolder");
 
-    run_cli(root.path())?;
+    let output = run_cli(root_path)?;
 
-    assert_path_absent(&root.path().join("x"));
-    assert_dir_exists(&z);
-    assert!(z.join("README").is_file());
+    assert_eq!(
+        output,
+        indoc! {"
+        removing empty directory: folder/subfolder
+        removing empty directory: folder
+    "}
+    );
+
+    assert_path_absent(&empty_subfolder);
+    assert_path_absent(&folder_with_empty_subfolder);
     Ok(())
 }
 
