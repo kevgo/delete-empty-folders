@@ -13,30 +13,37 @@ fn main() -> io::Result<()> {
 }
 
 /// Deletes empty directories under `dir`, depth-first. Never removes `root` itself.
-fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
+/// Returns true if the directory was removed.
+fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
     for entry in entries {
-        has_children = true;
         let entry = entry?;
         let Ok(filetype) = entry.file_type() else {
+            has_children = true;
             continue;
         };
         if !filetype.is_dir() {
+            has_children = true;
             continue;
         }
         let path = entry.path();
         if skip_directory(&path) {
+            has_children = true;
             continue;
         }
-        remove_empty_descendants(&path, root)?;
+        let gone_now = remove_empty_descendants(&path, root)?;
+        if !gone_now {
+            has_children = true;
+        }
     }
     if dir == root || has_children {
-        return Ok(());
+        return Ok(false);
     }
     let relative_path = dir.strip_prefix(root).unwrap_or(dir);
     println!("removing empty directory: {}", relative_path.display());
-    fs::remove_dir(dir)
+    fs::remove_dir(dir)?;
+    Ok(true)
 }
 
 fn skip_directory(path: &Path) -> bool {
