@@ -54,7 +54,12 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
     }
 
     if dir != root && !contains_files {
-        println!("removing empty directory: {}", dir.display());
+        let path_for_msg: &Path = match dir.strip_prefix(root) {
+            Ok(p) if p.as_os_str().is_empty() => Path::new("."),
+            Ok(p) => p,
+            Err(_) => dir,
+        };
+        println!("removing empty directory: {}", path_for_msg.display());
         match fs::remove_dir(dir) {
             Ok(()) => {}
             Err(e) if e.kind() == io::ErrorKind::PermissionDenied => {
