@@ -42,7 +42,6 @@ fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<()> {
             Err(e) => return Err(e),
         };
         let path = entry.path();
-        println!("entry: {}", path.display());
         let Ok(filetype) = entry.file_type() else {
             continue;
         };
