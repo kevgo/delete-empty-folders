@@ -47,9 +47,12 @@ impl DeleteWorld {
 }
 
 #[given(expr = "a file {string}")]
-async fn a_file_with_content(world: &mut DeleteWorld, filename: String) -> io::Result<()> {
+async fn a_file(world: &mut DeleteWorld, filename: String) -> io::Result<()> {
     let filepath = world.dir.join(filename);
-    fs::write(filepath, "x".as_bytes()).await
+    fs::create_dir_all(filepath.parent().unwrap())
+        .await
+        .unwrap();
+    fs::write(&filepath, "x".as_bytes()).await
 }
 
 #[given(expr = "a folder {string}")]
@@ -72,10 +75,16 @@ async fn running(world: &mut DeleteWorld) {
 }
 
 #[then("it prints:")]
-fn verify_output(world: &mut DeleteWorld, step: &Step) {
+fn it_prints(world: &mut DeleteWorld, step: &Step) {
     let want = step.docstring.as_ref().unwrap().trim();
     let have = world.output();
     pretty::assert_eq!(have.trim(), want);
+}
+
+#[then("it prints nothing")]
+fn it_prints_nothing(world: &mut DeleteWorld) {
+    let have = world.output();
+    pretty::assert_eq!(have.trim(), "");
 }
 
 #[then(expr = "the workspace is empty")]
