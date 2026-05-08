@@ -89,9 +89,9 @@ async fn running(world: &mut DeleteWorld) {
 
 #[then("it prints:")]
 fn it_prints(world: &mut DeleteWorld, step: &Step) {
-    let want = step.docstring.as_ref().unwrap().trim();
+    let want = step.docstring.as_ref().unwrap();
     let have = world.output();
-    pretty::assert_eq!(have.trim(), want);
+    pretty::assert_eq!(have.trim(), want.trim());
 }
 
 #[then("it prints nothing")]
