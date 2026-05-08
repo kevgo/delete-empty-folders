@@ -81,11 +81,20 @@ async fn gitignore_file(world: &mut DeleteWorld, step: &Step) {
     fs::write(&path, content.as_bytes()).await.unwrap();
 }
 
+/// path to the `delete-empty-folders` binary built by Cargo (`target/debug/…`)
+fn delete_empty_folders_executable() -> PathBuf {
+    env::current_dir()
+        .expect("cannot determine the current directory")
+        .join("target")
+        .join("debug")
+        .join(format!("delete-empty-folders{}", env::consts::EXE_SUFFIX))
+}
+
 #[when(expr = "running delete-empty-folders")]
 async fn running(world: &mut DeleteWorld) {
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
     world.output = Some(
-        Command::new("../../target/debug/delete-empty-folders")
+        Command::new(delete_empty_folders_executable())
             .current_dir(&world.dir)
             .output()
             .await
