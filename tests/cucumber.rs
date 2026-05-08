@@ -97,7 +97,7 @@ fn it_prints(world: &mut DeleteWorld, step: &Step) {
 #[then("it prints nothing")]
 fn it_prints_nothing(world: &mut DeleteWorld) {
     let have = world.output();
-    pretty::assert_eq!(have.trim(), "");
+    assert_eq!(have.trim(), "");
 }
 
 #[then(expr = "the workspace is empty")]
