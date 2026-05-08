@@ -3,6 +3,7 @@ RUN_THAT_APP_VERSION = 0.34.0
 RTA = tools/rta@${RUN_THAT_APP_VERSION}
 
 cuke:
+	rm -rf tmp
 	cargo test --test=cucumber
 
 
