@@ -24,6 +24,7 @@ struct DeleteWorld {
     output: Option<Output>,
 }
 
+/// a file or folder in the workspace
 #[derive(Debug, PartialEq)]
 enum FSEntry {
     File(PathBuf),
@@ -38,9 +39,7 @@ impl DeleteWorld {
             output: None,
         }
     }
-}
 
-impl DeleteWorld {
     /// provides the exit code of the last run
     fn exit_status(&self) -> ExitStatus {
         match &self.output {
