@@ -2,7 +2,6 @@
 # Additional rules to enable on top of defaults (additive, does not replace)
 extend-enable = [
   "MD060", # format tables
-  "MD063", # case style for headings
   "MD070", # nested code fence collision
   "MD073", # validate TOC
 ]
@@ -36,10 +35,3 @@ names = ["delete-empty-folders"]
 [MD060]
 enabled = true
 style = "aligned-no-space"
-
-# Case style for headings
-[MD063]
-enabled = true
-style = "sentence-case"
-ignore-words = []
-preserve-cased-words = true

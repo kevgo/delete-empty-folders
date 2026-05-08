@@ -1,6 +1,6 @@
 # delete-empty-folders changelog
 
-## 0.0.1
+## v0.0.1
 
 ### New features
 
