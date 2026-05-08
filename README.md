@@ -6,6 +6,8 @@ so your working tree matches what actually exists in Git.
 A directory is considered empty if it contains no files, including nested files.
 Directories that only contain other empty directories are also removed.
 
+Ignores files and folders in [.gitignore](https://git-scm.com/docs/gitignore).
+
 ## Why this exists
 
 Git tracks files, not directories.
