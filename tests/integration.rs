@@ -1,6 +1,5 @@
 //! Integration tests: temp workspace, synthetic trees, then verify filesystem results.
 
-use indoc::indoc;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
