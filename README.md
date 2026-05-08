@@ -47,8 +47,6 @@ Run in the directory to clean up:
 delete-empty-folders
 ```
 
-There are no config options.
-
 The tool does not scan or remove files
 and folders [ignored by Git](https://git-scm.com/docs/gitignore).
 
