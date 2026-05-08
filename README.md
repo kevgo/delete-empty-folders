@@ -52,5 +52,4 @@ There are no config options.
 The tool does not scan or remove files
 and folders [ignored by Git](https://git-scm.com/docs/gitignore).
 
-To keep an empty folder, add a `.gitignore` file inside it and commit it to Git
-([more details](https://adamj.eu/tech/2023/09/18/git-dont-create-gitkeep/)).
+To keep an empty folder, add a `.gitkeep` file inside it.
