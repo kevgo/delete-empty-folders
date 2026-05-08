@@ -2,7 +2,7 @@ RTA_VERSION = 0.34.0
 
 KEEP_SORTED = $(RTA) keep-sorted
 RIPGREP = $(RTA) ripgrep
-RTA = tools/rta@${RUN_THAT_APP_VERSION}
+RTA = tools/rta@${RTA_VERSION}
 
 test: lint cuke  # run all tests
 
