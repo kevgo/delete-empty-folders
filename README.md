@@ -1,21 +1,27 @@
 # delete-empty-folders
 
-This tool deletes folders in the current directory or subdirectories that contain no files.
-Folders containing only other empty folders are considered empty.
+Delete empty directories from the current directory tree so your working tree matches what actually exists in Git.
 
-## Q&A
+A directory is considered empty if it contains no files, including nested files.
+Directories that only contain other empty directories are also removed.
 
-### Why?
+## Why this exists
 
-Empty folders can lead to a different folder structure on your dev machine vs other dev machines, CI servers, or production.
-This can lead to errors.
-Using this tool avoids those errors.
+Git tracks files, not directories.
 
-This happens because Git doesntracks only files, not folders.
-When Git switches to a different branch, it creates and removes folders as necessary to create the files on that branch.
+That means empty folders on your machine can stick around indefinitely, even after switching branches, rebasing, or deleting files. Since those folders are not part of the repository state:
 
-If your workstation contains empty folders,
-those folders will not be stored in Git.
-Running `git status` will not show them and `git add` ignore them.
-This means other developers and cloud servers will see a different folder structure than you have on your machine.
-This can cause different behavior on your machine vs other machines.
+* `git status` won’t show them
+* `git add` won’t include them
+* other developers, CI environments, and production servers won’t have them
+
+Over time, this can leave your local filesystem in a different state than every other environment.
+
+Most of the time that's harmless. Sometimes it isn't.
+
+Examples:
+
+* code that scans directories and assumes their existence means something
+* tools that require a particular folder to exist
+
+For examples see the human-readable [end-to-end tests](features/).
