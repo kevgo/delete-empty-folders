@@ -6,6 +6,10 @@ cuke:
 	rm -rf tmp
 	cargo test --test=cucumber
 
+lint:
+	cargo clippy --all-targets --all-features -- --deny=warnings
+
+test: lint cuke
 
 # --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
 
