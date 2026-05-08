@@ -1,8 +1,6 @@
 RTA_VERSION = 0.34.0
 
 CUCUMBER_SORT = $(RTA) cucumber-sort
-KEEP_SORTED = $(RTA) keep-sorted
-RIPGREP = $(RTA) ripgrep
 RTA = tools/rta@${RTA_VERSION}
 
 test: lint cuke  # run all tests
