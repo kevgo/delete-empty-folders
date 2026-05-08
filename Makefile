@@ -2,17 +2,15 @@ RTA_VERSION = 0.34.0
 
 RTA = tools/rta@${RUN_THAT_APP_VERSION}
 
-cuke:
+test: lint cuke  # run all tests
+
+cuke:  # run end-to-end tests
 	rm -rf tmp
 	cargo test --test=cucumber
-
-help:  # shows all available Make commands
-	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
 lint:
 	cargo clippy --all-targets --all-features -- --deny=warnings
 
-test: lint cuke
 
 # --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,4 +19,3 @@ ${RTA}:
 	curl -fSL https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -s -- --version ${RTA_VERSION} --name $(RTA)
 
 .SILENT:
-.DEFAULT_GOAL := help
