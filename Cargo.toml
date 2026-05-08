@@ -24,3 +24,9 @@ lto = true
 opt-level = "z"
 panic = "abort"
 strip = "symbols"
+
+[lints.clippy]
+pedantic = "warn"
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -14,6 +14,11 @@ help:  # shows all available Make commands
 lint:  # run all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 
+setup:  # install development dependencies on this computer
+	rustup component add clippy
+	rustup toolchain add nightly
+	rustup component add rustfmt --toolchain nightly
+	cargo install cargo-machete --locked
 
 # --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
 
