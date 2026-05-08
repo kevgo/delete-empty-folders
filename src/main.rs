@@ -18,7 +18,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-/// Simpler type signature for internal use.
+/// simpler type signature for internal use
 type Gitignore<'a> = Option<&'a gitignore::File<'a>>;
 
 /// Deletes empty directories under `dir`, depth-first. Never removes `root` itself.
