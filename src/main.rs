@@ -58,7 +58,6 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
 
 /// indicates whether the given directory should be skipped
 fn skip_directory(path: &Path) -> bool {
-    path.file_name()
-        .and_then(|n| n.to_str())
-        .is_some_and(|name| SKIP_DIR_NAMES.contains(&name))
+    // TODO: return whether the .gitignore file excludes the given path
+    false
 }

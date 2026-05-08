@@ -74,6 +74,13 @@ async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
     }
 }
 
+#[given("a .gitignore file with contents:")]
+async fn gitignore_file(world: &mut DeleteWorld, step: &Step) {
+    let path = world.dir.join(".gitignore");
+    let content = step.docstring.as_ref().unwrap();
+    fs::write(&path, content.as_bytes()).await.unwrap();
+}
+
 #[when(expr = "running delete-empty-folders")]
 async fn running(world: &mut DeleteWorld) {
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
