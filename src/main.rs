@@ -52,6 +52,7 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
     Ok(true)
 }
 
+/// indicates whether the given directory should be skipped
 fn skip_directory(path: &Path) -> bool {
     path.file_name()
         .and_then(|n| n.to_str())
