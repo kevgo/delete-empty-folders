@@ -14,5 +14,6 @@ Feature: Does not delete non-empty folders
       """
       removing empty directory: folder/empty
       """
-    And the workspace contains the files:
-      | folder/file.txt |
+    And the workspace contains:
+      | folder | folder          |
+      | file   | folder/file.txt |
