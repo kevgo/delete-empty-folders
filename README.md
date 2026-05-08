@@ -1,7 +1,7 @@
 # delete-empty-folders
 
-[![Linux tests](https://github.com/kevgo/delete-empty-folders/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/delete-empty-folders/actions/workflows/ci_linux.yml)
-[![Windows tests](https://github.com/kevgo/delete-empty-folders/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/delete-empty-folders/actions/workflows/ci_windows.yml)
+![Linux tests](https://github.com/kevgo/delete-empty-folders/actions/workflows/ci_linux.yml/badge.svg)
+![Windows tests](https://github.com/kevgo/delete-empty-folders/actions/workflows/ci_windows.yml/badge.svg)
 
 Delete empty directories from the current directory tree
 so your working tree matches what actually exists in Git.
