@@ -1,7 +1,7 @@
 Feature: Deletes empty folders
 
   Scenario: multiple empty subfolders
-    Given a folder with:
+    Given a folder with contents:
       | folder | folderA/folder1 |
       | folder | folderA/folder2 |
       | folder | folderA/folder3 |
@@ -16,7 +16,7 @@ Feature: Deletes empty folders
     And the workspace is empty
 
   Scenario: nested empty folders
-    Given a folder with:
+    Given a folder with contents:
       | folder | folder1/folder2/folder3/folder4 |
     When running delete-empty-folders
     Then it prints:

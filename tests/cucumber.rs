@@ -58,7 +58,7 @@ impl DeleteWorld {
     }
 }
 
-#[given("a folder with:")]
+#[given("a folder with contents:")]
 async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
     let table = step.table.as_ref().unwrap();
     for row in &table.rows {
