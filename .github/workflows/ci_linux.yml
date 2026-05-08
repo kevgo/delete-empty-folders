@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v1.2.0
+      - uses: Swatinem/rust-cache@v2
       - run: make setup
       - run: make ps
       - run: git diff HEAD --exit-code --color
