@@ -7,8 +7,8 @@ use std::path::Path;
 pub const SKIP_DIR_NAMES: &[&str] = &[".git", "node_modules"];
 
 fn main() -> io::Result<()> {
-    let root = env::current_dir()?;
-    remove_empty_descendants(&root, &root)?;
+    let cwd = env::current_dir()?;
+    remove_empty_descendants(&cwd, &cwd)?;
     Ok(())
 }
 
