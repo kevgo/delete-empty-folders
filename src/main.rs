@@ -26,11 +26,7 @@ type Gitignore<'a> = Option<&'a gitignore::File<'a>>;
 /// # Errors
 ///
 /// Returns [`io::Error`] when any file operation fails.
-pub fn remove_empty_descendants(
-    dir: &Path,
-    root: &Path,
-    gitignore_file: Gitignore,
-) -> io::Result<bool> {
+pub fn remove_empty_descendants(dir: &Path, root: &Path, gitignore: Gitignore) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
     let mut child_dirs = Vec::new();
@@ -45,7 +41,7 @@ pub fn remove_empty_descendants(
             continue;
         }
         let path = entry.path();
-        if skip_directory(&path, gitignore_file) {
+        if skip_directory(&path, gitignore) {
             has_children = true;
             continue;
         }
@@ -54,7 +50,7 @@ pub fn remove_empty_descendants(
     // Note: sort the child directories because certain file systems return entries in random order.
     child_dirs.sort();
     for path in child_dirs {
-        let gone_now = remove_empty_descendants(&path, root, gitignore_file)?;
+        let gone_now = remove_empty_descendants(&path, root, gitignore)?;
         if !gone_now {
             has_children = true;
         }
@@ -69,14 +65,14 @@ pub fn remove_empty_descendants(
 }
 
 /// indicates whether the given directory should be skipped
-fn skip_directory(path: &Path, gitignore_file: Gitignore) -> bool {
+fn skip_directory(path: &Path, gitignore: Gitignore) -> bool {
     let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
         return false;
     };
     if SKIP_DIR_NAMES.contains(&name) {
         return true;
     }
-    let Some(file) = gitignore_file else {
+    let Some(file) = gitignore else {
         return false;
     };
     let Ok(is_excluded) = file.is_excluded(path) else {
