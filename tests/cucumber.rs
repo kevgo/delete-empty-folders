@@ -63,12 +63,12 @@ async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
     for row in &table.rows {
         let path = world.dir.join(&row[1]);
         match row[0].as_str() {
-            "file" => {
+            "FILE" => {
                 let parent = path.parent().unwrap();
                 fs::create_dir_all(parent).await.unwrap();
                 fs::write(&path, "x".as_bytes()).await.unwrap();
             }
-            "folder" => fs::create_dir_all(path).await.unwrap(),
+            "FOLDER" => fs::create_dir_all(path).await.unwrap(),
             other => panic!("unexpected entry type: {}", other),
         };
     }
@@ -120,8 +120,8 @@ async fn workspace_contains(world: &mut DeleteWorld, step: &Step) {
     for row in &table.rows {
         let path = world.dir.join(&row[1]);
         let entry = match row[0].as_str() {
-            "file" => FSEntry::File(path),
-            "folder" => FSEntry::Folder(path),
+            "FILE" => FSEntry::File(path),
+            "FOLDER" => FSEntry::Folder(path),
             other => panic!("unexpected entry type: {}", other),
         };
         want.push(entry);

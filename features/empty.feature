@@ -2,9 +2,9 @@ Feature: Deletes empty folders
 
   Scenario: multiple empty subfolders
     Given a folder with contents:
-      | folder | folderA/folder1 |
-      | folder | folderA/folder2 |
-      | folder | folderA/folder3 |
+      | FOLDER | folderA/folder1 |
+      | FOLDER | folderA/folder2 |
+      | FOLDER | folderA/folder3 |
     When running delete-empty-folders
     Then it prints:
       """
@@ -17,7 +17,7 @@ Feature: Deletes empty folders
 
   Scenario: nested empty folders
     Given a folder with contents:
-      | folder | folder1/folder2/folder3/folder4 |
+      | FOLDER | folder1/folder2/folder3/folder4 |
     When running delete-empty-folders
     Then it prints:
       """
