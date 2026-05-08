@@ -1,6 +1,6 @@
 [global]
 # Additional rules to enable on top of defaults (additive, does not replace)
-enable = [
+extend-enable = [
   "MD060", # format tables
   "MD063", # case style for headings
   "MD070", # nested code fence collision
@@ -8,7 +8,7 @@ enable = [
 ]
 
 # Additional rules to disable on top of the disable list (additive)
-disable = [
+extend-disable = [
   "MD033", # we allow inline HTML
 ]
 
