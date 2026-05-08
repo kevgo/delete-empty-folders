@@ -67,17 +67,14 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path, gitignore: Gitignore) -
 
 /// indicates whether the given directory should be skipped
 fn skip_directory(path: &Path, gitignore: Gitignore) -> bool {
-    let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
+    let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
         return false;
     };
-    if SKIP_DIR_NAMES.contains(&name) {
+    if SKIP_DIR_NAMES.contains(&file_name) {
         return true;
     }
-    let Some(file) = gitignore else {
+    let Some(gitignore) = gitignore else {
         return false;
     };
-    let Ok(is_excluded) = file.is_excluded(path) else {
-        return false;
-    };
-    is_excluded
+    gitignore.is_excluded(path).unwrap_or(false)
 }
