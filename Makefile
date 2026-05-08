@@ -1,6 +1,7 @@
 RTA_VERSION = 0.34.0
 
-RTA = tools/rta@${RUN_THAT_APP_VERSION}
+CUCUMBER_SORT = $(RTA) cucumber-sort
+RTA = tools/rta@${RTA_VERSION}
 
 test: lint cuke  # run all tests
 
@@ -8,11 +9,18 @@ cuke:  # run end-to-end tests
 	rm -rf tmp
 	cargo test --test=cucumber
 
+fix: ${RTA} # correct all auto-fixable issues
+	cargo +nightly fix --allow-dirty
+	cargo clippy --fix --allow-dirty
+	cargo +nightly fmt
+	$(CUCUMBER_SORT) format
+
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | grep -v '[$$]{RTA}:' | sed 's/:.*#/#/' | column -s "#" -t
 
 lint:  # run all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
+	$(CUCUMBER_SORT) check
 
 setup:  # install development dependencies on this computer
 	rustup component add clippy
