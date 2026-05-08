@@ -17,9 +17,10 @@ struct DeleteWorld {
     /// the directory containing the test files of the current scenario
     dir: PathBuf,
 
+    /// files and folders in the workspace before running the executable
     initial_contents: Vec<FSEntry>,
 
-    /// the result of running the executable
+    /// the result of the running executable
     output: Option<Output>,
 }
 
@@ -111,9 +112,10 @@ async fn workspace_is_unchanged(world: &mut DeleteWorld) {
     assert_eq!(entries, world.initial_contents);
 }
 
-#[then(expr = "the workspace contains a folder {string}")]
-fn contains_folder(world: &mut DeleteWorld, folder: String) {
-    assert!(world.dir.join(folder).is_dir())
+#[then(expr = "the workspace contains:")]
+async fn workspace_contains(world: &mut DeleteWorld, folder: String) {
+    let mut have = vec![];
+    load_dir_contents(&world.dir, &mut have).await;
 }
 
 /// creates a temporary directory

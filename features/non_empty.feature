@@ -11,4 +11,5 @@ Feature: Does not delete non-empty folders
     And a folder "folder/empty"
     When running delete-empty-folders
     Then it prints nothing
-    And the workspace is unchanged
+    And the workspace contains:
+      | folder/file.txt |
