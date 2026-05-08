@@ -29,7 +29,7 @@ tables = false                       # Exclude tables from line length check
 
 # Proper names that should be capitalized correctly
 [MD044]
-names = ["Allocation Platform", "GitHub", "Markdown", "rumdl"]
+names = ["delete-empty-folders"]
 # code-blocks = false  # Check code blocks for proper names (default: false, skips code blocks)
 
 # format tables
