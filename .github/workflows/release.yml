@@ -48,6 +48,6 @@ jobs:
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           archive: ${{ matrix.filename }}
-          bin: delete_empty_folders
+          bin: delete-empty-folders
           target: ${{ matrix.target }}
           token: ${{ secrets.RELEASE_TOKEN }}
