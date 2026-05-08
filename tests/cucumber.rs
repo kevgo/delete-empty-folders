@@ -2,7 +2,7 @@ use cucumber::gherkin::Step;
 use cucumber::{World, given, then, when};
 use rand::Rng;
 use std::borrow::Cow;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{ExitStatus, Output};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::{env, str};
@@ -15,14 +15,23 @@ struct DeleteWorld {
     /// the directory containing the test files of the current scenario
     dir: PathBuf,
 
+    initial_contents: Vec<FSEntry>,
+
     /// the result of running the executable
     output: Option<Output>,
+}
+
+#[derive(Debug, PartialEq)]
+enum FSEntry {
+    File(PathBuf),
+    Folder(PathBuf),
 }
 
 impl DeleteWorld {
     fn new() -> Self {
         Self {
             dir: tmp_dir(),
+            initial_contents: vec![],
             output: None,
         }
     }
@@ -47,12 +56,11 @@ impl DeleteWorld {
 }
 
 #[given(expr = "a file {string}")]
-async fn a_file(world: &mut DeleteWorld, filename: String) -> io::Result<()> {
+async fn a_file(world: &mut DeleteWorld, filename: String) {
     let filepath = world.dir.join(filename);
-    fs::create_dir_all(filepath.parent().unwrap())
-        .await
-        .unwrap();
-    fs::write(&filepath, "x".as_bytes()).await
+    let parent = filepath.parent().unwrap();
+    fs::create_dir_all(parent).await.unwrap();
+    fs::write(&filepath, "x".as_bytes()).await.unwrap();
 }
 
 #[given(expr = "a folder {string}")]
@@ -63,6 +71,7 @@ async fn a_folder(world: &mut DeleteWorld, name: String) -> io::Result<()> {
 
 #[when(expr = "running delete-empty-folders")]
 async fn running(world: &mut DeleteWorld) {
+    load_dir_contents(&world.dir, &mut world.initial_contents).await;
     let cmd = "../../target/debug/delete-empty-folders";
     world.output = Some(
         Command::new(cmd)
@@ -93,6 +102,13 @@ async fn workspace_is_empty(world: &mut DeleteWorld) {
     assert!(entries.next_entry().await.unwrap().is_none());
 }
 
+#[then(expr = "the workspace is unchanged")]
+async fn workspace_is_unchanged(world: &mut DeleteWorld) {
+    let mut entries = vec![];
+    load_dir_contents(&world.dir, &mut entries).await;
+    assert_eq!(entries, world.initial_contents);
+}
+
 #[then(expr = "the workspace contains a folder {string}")]
 fn contains_folder(world: &mut DeleteWorld, folder: String) {
     assert!(world.dir.join(folder).is_dir())
@@ -113,6 +129,21 @@ fn tmp_dir() -> PathBuf {
     let dir = cwd.join("tmp").join(format!("{}-{}", timestamp, rand));
     std::fs::create_dir_all(&dir).unwrap();
     dir
+}
+
+/// provides the contents of the given directory and all its subdirectories
+async fn load_dir_contents(dir: &Path, result: &mut Vec<FSEntry>) {
+    let mut entries = fs::read_dir(dir).await.unwrap();
+    while let Some(entry) = entries.next_entry().await.unwrap() {
+        let file_type = entry.file_type().await.unwrap();
+        if file_type.is_dir() {
+            load_dir_contents(&entry.path(), result).await;
+        } else if file_type.is_file() {
+            result.push(FSEntry::File(entry.path()));
+        } else {
+            panic!("unexpected file type: {:?}", file_type);
+        }
+    }
 }
 
 #[tokio::main(flavor = "current_thread")]
