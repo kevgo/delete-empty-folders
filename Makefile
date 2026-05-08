@@ -2,6 +2,7 @@ RTA_VERSION = 0.34.0
 
 CUCUMBER_SORT = $(RTA) cucumber-sort
 RTA = tools/rta@${RTA_VERSION}
+RUMDL = $(RTA) rumdl
 
 test: lint cuke  # run all tests
 
@@ -14,6 +15,7 @@ fix: ${RTA} # correct all auto-fixable issues
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
 	$(CUCUMBER_SORT) format
+	$(RUMDL) fmt --quiet
 
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | grep -v '[$$]{RTA}:' | sed 's/:.*#/#/' | column -s "#" -t
@@ -21,6 +23,7 @@ help:  # shows all available Make commands
 lint:  # run all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	$(CUCUMBER_SORT) check
+	$(RUMDL) check
 
 setup:  # install development dependencies on this computer
 	rustup component add clippy
