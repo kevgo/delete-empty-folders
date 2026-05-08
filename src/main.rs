@@ -17,7 +17,7 @@ fn main() -> io::Result<()> {
 ///
 /// # Errors
 ///
-/// Returns [`io::Error`] when reading `dir`, iterating its entries, or removing an empty directory fails.
+/// Returns [`io::Error`] when any file operation fails.
 pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
