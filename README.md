@@ -29,4 +29,4 @@ Examples:
 * code that scans directories and assumes their existence means something
 * tools that require a particular folder to exist
 
-For examples see the human-readable [end-to-end tests](features/).
+For usage examples see the human-readable [end-to-end tests](features/).
