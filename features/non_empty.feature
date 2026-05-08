@@ -10,6 +10,9 @@ Feature: Does not delete non-empty folders
     Given a file "folder/file.txt"
     And a folder "folder/empty"
     When running delete-empty-folders
-    Then it prints nothing
-    And the workspace contains:
+    Then it prints:
+      """
+      removing empty directory: folder/empty
+      """
+    And the workspace contains the files:
       | folder/file.txt |

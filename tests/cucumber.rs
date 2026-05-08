@@ -112,8 +112,14 @@ async fn workspace_is_unchanged(world: &mut DeleteWorld) {
     assert_eq!(entries, world.initial_contents);
 }
 
-#[then(expr = "the workspace contains:")]
-async fn workspace_contains(world: &mut DeleteWorld, folder: String) {
+#[then(expr = "the workspace contains the files:")]
+async fn workspace_contains(world: &mut DeleteWorld, step: &Step) {
+    let mut want = vec![];
+    let table = step.table.as_ref().unwrap();
+    for row in &table.rows {
+        let path = world.dir.join(&row[0]);
+        want.push(FSEntry::File(path));
+    }
     let mut have = vec![];
     load_dir_contents(&world.dir, &mut have).await;
 }
