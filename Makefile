@@ -15,7 +15,7 @@ fix: ${RTA} # correct all auto-fixable issues
 	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
-	$(CUCUMBER_SORT) format
+	$(CUCUMBER_SORT) format --record
 
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | grep -v '[$$]{RTA}:' | sed 's/:.*#/#/' | column -s "#" -t

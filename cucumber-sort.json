@@ -5,6 +5,13 @@
   "record": false,
   "fail-fast": false,
   "keep-order": [],
-  "steps": [],
-  "unknown-steps": []
+  "steps": [
+    "^a folder with contents:$",
+    "^running delete-empty-folders$",
+    "^it prints:$",
+    "^it prints nothing$",
+    "^the workspace contains:$",
+    "^the workspace is empty$",
+    "^the workspace is unchanged$"
+  ]
 }
