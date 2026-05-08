@@ -77,9 +77,8 @@ async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
 #[when(expr = "running delete-empty-folders")]
 async fn running(world: &mut DeleteWorld) {
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
-    let cmd = "../../target/debug/delete-empty-folders";
     world.output = Some(
-        Command::new(cmd)
+        Command::new("../../target/debug/delete-empty-folders")
             .current_dir(&world.dir)
             .output()
             .await
