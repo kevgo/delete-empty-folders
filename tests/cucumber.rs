@@ -75,7 +75,7 @@ async fn running(world: &mut DeleteWorld) {
 fn verify_output(world: &mut DeleteWorld, step: &Step) {
     let want = step.docstring.as_ref().unwrap().trim();
     let have = world.output();
-    pretty::assert_eq!(have, want);
+    pretty::assert_eq!(have.trim(), want);
 }
 
 #[then(expr = "the workspace is empty")]

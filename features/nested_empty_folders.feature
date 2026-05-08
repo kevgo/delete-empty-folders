@@ -6,5 +6,6 @@ Feature: Deletes nested empty folders
     Then it prints:
       """
       removing empty directory: folder/subfolder
+      removing empty directory: folder
       """
     And the workspace is empty
