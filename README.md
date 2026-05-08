@@ -42,6 +42,14 @@ For usage examples see the human-readable [end-to-end tests](features/).
 cargo install --git https://github.com/kevgo/delete-empty-folders
 ```
 
+### Run via run-that-app
+
+```sh
+rta --add delete-empty-folders
+
+rta delete-empty-folders
+```
+
 ## Usage
 
 Run in the directory to clean up:
