@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/kevgo/cucumber-sort/refs/heads/main/docs/schema.json",
+  "include": [],
+  "exclude": [],
+  "record": true,
+  "fail-fast": false,
+  "keep-order": [],
+  "steps": [
+    "^a folder with contents:$",
+    "^running delete-empty-folders$",
+    "^it prints:$",
+    "^it prints nothing$",
+    "^the workspace contains:$",
+    "^the workspace is empty$",
+    "^the workspace is unchanged$"
+  ]
+}
