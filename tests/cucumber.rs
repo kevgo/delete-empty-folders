@@ -8,8 +8,8 @@ use std::pin::Pin;
 use std::process::{ExitStatus, Output};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::{env, str};
+use tokio::fs;
 use tokio::process::Command;
-use tokio::{fs, io};
 
 #[derive(Debug, World)]
 #[world(init = Self::new)]
@@ -58,18 +58,21 @@ impl DeleteWorld {
     }
 }
 
-#[given(expr = "a file {string}")]
-async fn a_file(world: &mut DeleteWorld, filename: String) {
-    let filepath = world.dir.join(filename);
-    let parent = filepath.parent().unwrap();
-    fs::create_dir_all(parent).await.unwrap();
-    fs::write(&filepath, "x".as_bytes()).await.unwrap();
-}
-
-#[given(expr = "a folder {string}")]
-async fn a_folder(world: &mut DeleteWorld, name: String) -> io::Result<()> {
-    let folder_path = &world.dir.join(name);
-    fs::create_dir_all(folder_path).await
+#[given("a folder with:")]
+async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
+    let table = step.table.as_ref().unwrap();
+    for row in &table.rows {
+        let path = world.dir.join(&row[1]);
+        match row[0].as_str() {
+            "file" => {
+                let parent = path.parent().unwrap();
+                fs::create_dir_all(parent).await.unwrap();
+                fs::write(&path, "x".as_bytes()).await.unwrap();
+            }
+            "folder" => fs::create_dir_all(path).await.unwrap(),
+            other => panic!("unexpected entry type: {}", other),
+        };
+    }
 }
 
 #[when(expr = "running delete-empty-folders")]
