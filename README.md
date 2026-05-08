@@ -6,9 +6,6 @@ so your working tree matches what actually exists in Git.
 A directory is considered empty if it contains no files, including nested files.
 Directories that only contain other empty directories are also removed.
 
-Does not scan or remove files
-and folders [ignored by Git](https://git-scm.com/docs/gitignore).
-
 ## Why this exists
 
 Git tracks files, not directories.
@@ -33,3 +30,24 @@ Examples:
 * tools that require a particular folder to exist
 
 For usage examples see the human-readable [end-to-end tests](features/).
+
+## Installation
+
+### Compile from source
+
+```sh
+cargo install --git https://github.com/kevgo/delete-empty-folders
+```
+
+## Usage
+
+Run in the directory to clean up:
+
+```text
+delete-empty-folders
+```
+
+There are no config options.
+
+The tool does not scan or remove files
+and folders [ignored by Git](https://git-scm.com/docs/gitignore).
