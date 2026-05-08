@@ -22,6 +22,7 @@ help:  # shows all available Make commands
 
 lint:  # run all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
+	$(CUCUMBER_SORT) check
 
 setup:  # install development dependencies on this computer
 	rustup component add clippy
