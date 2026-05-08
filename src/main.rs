@@ -18,6 +18,8 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
+type Gitignore<'a> = Option<&'a gitignore::File<'a>>;
+
 /// Deletes empty directories under `dir`, depth-first. Never removes `root` itself.
 /// Returns true if the directory was removed.
 ///
@@ -27,7 +29,7 @@ fn main() -> io::Result<()> {
 pub fn remove_empty_descendants(
     dir: &Path,
     root: &Path,
-    gitignore_file: Option<&gitignore::File<'_>>,
+    gitignore_file: Gitignore,
 ) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
@@ -67,7 +69,7 @@ pub fn remove_empty_descendants(
 }
 
 /// indicates whether the given directory should be skipped
-fn skip_directory(path: &Path, gitignore_file: Option<&gitignore::File<'_>>) -> bool {
+fn skip_directory(path: &Path, gitignore_file: Gitignore) -> bool {
     let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
         return false;
     };
