@@ -14,7 +14,7 @@ use tokio::process::Command;
 #[derive(Debug, World)]
 #[world(init = Self::new)]
 struct DeleteWorld {
-    /// the directory containing the test files for the current scenario
+    /// the workspace for the current scenario
     dir: PathBuf,
 
     /// files and folders in the workspace before running the executable
