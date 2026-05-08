@@ -7,6 +7,7 @@
   "keep-order": [],
   "steps": [
     "^a folder with contents:$",
+    "^a .gitignore file with contents:$",
     "^running delete-empty-folders$",
     "^it prints:$",
     "^it prints nothing$",
