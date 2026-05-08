@@ -14,7 +14,6 @@ fix: ${RTA} # correct all auto-fixable issues
 	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
-	$(KEEP_SORTED) $(shell $(RIPGREP) -l 'keep-sorted end' ./ --glob '!Makefile')
 
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | grep -v '[$$]{RTA}:' | sed 's/:.*#/#/' | column -s "#" -t
