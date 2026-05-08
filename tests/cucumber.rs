@@ -2,7 +2,9 @@ use cucumber::gherkin::Step;
 use cucumber::{World, given, then, when};
 use rand::Rng;
 use std::borrow::Cow;
+use std::future::Future;
 use std::path::{Path, PathBuf};
+use std::pin::Pin;
 use std::process::{ExitStatus, Output};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::{env, str};
@@ -132,18 +134,23 @@ fn tmp_dir() -> PathBuf {
 }
 
 /// provides the contents of the given directory and all its subdirectories
-async fn load_dir_contents(dir: &Path, result: &mut Vec<FSEntry>) {
-    let mut entries = fs::read_dir(dir).await.unwrap();
-    while let Some(entry) = entries.next_entry().await.unwrap() {
-        let file_type = entry.file_type().await.unwrap();
-        if file_type.is_dir() {
-            load_dir_contents(&entry.path(), result).await;
-        } else if file_type.is_file() {
-            result.push(FSEntry::File(entry.path()));
-        } else {
-            panic!("unexpected file type: {:?}", file_type);
+fn load_dir_contents<'a>(
+    dir: &'a Path,
+    result: &'a mut Vec<FSEntry>,
+) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
+    Box::pin(async move {
+        let mut entries = fs::read_dir(dir).await.unwrap();
+        while let Some(entry) = entries.next_entry().await.unwrap() {
+            let file_type = entry.file_type().await.unwrap();
+            if file_type.is_dir() {
+                load_dir_contents(&entry.path(), result).await;
+            } else if file_type.is_file() {
+                result.push(FSEntry::File(entry.path()));
+            } else {
+                panic!("unexpected file type: {:?}", file_type);
+            }
         }
-    }
+    })
 }
 
 #[tokio::main(flavor = "current_thread")]
