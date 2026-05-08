@@ -14,6 +14,10 @@ fn main() -> io::Result<()> {
 
 /// Deletes empty directories under `dir`, depth-first. Never removes `root` itself.
 /// Returns true if the directory was removed.
+///
+/// # Errors
+///
+/// Returns [`io::Error`] when reading `dir`, iterating its entries, or removing an empty directory fails.
 pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
