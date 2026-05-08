@@ -41,5 +41,5 @@ style = "aligned-no-space"
 [MD063]
 enabled = true
 style = "sentence-case"
-ignore-words = ["GitHub", "MCP", "OAE"]
+ignore-words = []
 preserve-cased-words = true
