@@ -4,8 +4,6 @@ CUCUMBER_SORT = $(RTA) cucumber-sort
 RTA = tools/rta@${RTA_VERSION}
 RUMDL = $(RTA) rumdl
 
-test: lint cuke  # run all tests
-
 cuke:  # run end-to-end tests
 	rm -rf tmp
 	cargo test --test=cucumber
@@ -25,11 +23,15 @@ lint:  # run all linters
 	$(CUCUMBER_SORT) check
 	$(RUMDL) check
 
+ps: fix lint cuke  # pitstop
+
 setup:  # install development dependencies on this computer
 	rustup component add clippy
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 	cargo install cargo-machete --locked
+
+test: lint cuke  # run all tests
 
 # --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
 

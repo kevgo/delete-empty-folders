@@ -256,6 +256,7 @@ name = "delete-empty-folders"
 version = "0.0.0"
 dependencies = [
  "cucumber",
+ "ignore",
  "itertools",
  "pretty_assertions",
  "rand",

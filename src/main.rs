@@ -3,12 +3,24 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+use ignore::gitignore::Gitignore;
+
 /// Last path segments of directories this tool never recurses into (no listing inside, no deletion there).
-pub const SKIP_DIR_NAMES: &[&str] = &[".git", "node_modules"];
+pub const SKIP_DIR_NAMES: &[&str] = &[".git"];
 
 fn main() -> io::Result<()> {
     let cwd = env::current_dir()?;
-    remove_empty_descendants(&cwd, &cwd)?;
+    let gitignore_path = cwd.join(".gitignore");
+    let gitignore_file = if gitignore_path.is_file() {
+        let (gitignore, err) = Gitignore::new(&gitignore_path);
+        if let Some(e) = err {
+            return Err(io::Error::other(e));
+        }
+        Some(gitignore)
+    } else {
+        None
+    };
+    remove_empty_descendants(&cwd, &cwd, gitignore_file.as_ref())?;
     Ok(())
 }
 
@@ -18,7 +30,11 @@ fn main() -> io::Result<()> {
 /// # Errors
 ///
 /// Returns [`io::Error`] when any file operation fails.
-pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
+pub fn remove_empty_descendants(
+    dir: &Path,
+    root: &Path,
+    gitignore: Option<&Gitignore>,
+) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
     let mut child_dirs = Vec::new();
@@ -33,7 +49,7 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
             continue;
         }
         let path = entry.path();
-        if skip_directory(&path) {
+        if skip_directory(&path, gitignore) {
             has_children = true;
             continue;
         }
@@ -42,7 +58,7 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
     // Note: sort the child directories because certain file systems return entries in random order.
     child_dirs.sort();
     for path in child_dirs {
-        let gone_now = remove_empty_descendants(&path, root)?;
+        let gone_now = remove_empty_descendants(&path, root, gitignore)?;
         if !gone_now {
             has_children = true;
         }
@@ -57,8 +73,15 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path) -> io::Result<bool> {
 }
 
 /// indicates whether the given directory should be skipped
-fn skip_directory(path: &Path) -> bool {
-    path.file_name()
-        .and_then(|n| n.to_str())
-        .is_some_and(|name| SKIP_DIR_NAMES.contains(&name))
+fn skip_directory(path: &Path, gitignore: Option<&Gitignore>) -> bool {
+    let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
+        return false;
+    };
+    if SKIP_DIR_NAMES.contains(&file_name) {
+        return true;
+    }
+    let Some(gitignore) = gitignore else {
+        return false;
+    };
+    gitignore.matched(path, true).is_ignore()
 }
