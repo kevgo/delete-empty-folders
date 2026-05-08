@@ -8,6 +8,9 @@ cuke:  # run end-to-end tests
 	rm -rf tmp
 	cargo test --test=cucumber
 
+fix:  # correct all auto-fixable issues
+
+
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | grep -v '[$$]{RTA}:' | sed 's/:.*#/#/' | column -s "#" -t
 
