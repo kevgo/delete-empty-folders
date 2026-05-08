@@ -143,6 +143,7 @@ fn load_dir_contents<'a>(
         while let Some(entry) = entries.next_entry().await.unwrap() {
             let file_type = entry.file_type().await.unwrap();
             if file_type.is_dir() {
+                result.push(FSEntry::Folder(entry.path()));
                 load_dir_contents(&entry.path(), result).await;
             } else if file_type.is_file() {
                 result.push(FSEntry::File(entry.path()));
