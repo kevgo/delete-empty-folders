@@ -1,5 +1,6 @@
 RTA_VERSION = 0.34.0
 
+CUCUMBER_SORT = $(RTA) cucumber-sort
 KEEP_SORTED = $(RTA) keep-sorted
 RIPGREP = $(RTA) ripgrep
 RTA = tools/rta@${RTA_VERSION}
@@ -14,6 +15,7 @@ fix: ${RTA} # correct all auto-fixable issues
 	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
+	$(CUCUMBER_SORT) format
 
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.SILENT:' | grep -v help | grep -v '[$$]{RTA}:' | sed 's/:.*#/#/' | column -s "#" -t
