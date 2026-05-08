@@ -14,9 +14,9 @@ That means empty folders on your machine can stick around indefinitely,
 even after switching branches, rebasing, or deleting files.
 Since those folders are not part of the repository state:
 
-* `git status` won’t show them
-* `git add` won’t include them
-* other developers, CI environments, and production servers won’t have them
+* `git status` won't show them
+* `git add` won't include them
+* other developers, CI environments, and production servers won't have them
 
 Over time, this can leave your local filesystem in a different state than every
 other environment.
