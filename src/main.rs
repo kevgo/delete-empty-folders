@@ -3,6 +3,8 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+use ignore::gitignore::Gitignore;
+
 /// Last path segments of directories this tool never recurses into (no listing inside, no deletion there).
 pub const SKIP_DIR_NAMES: &[&str] = &[".git"];
 
@@ -10,7 +12,11 @@ fn main() -> io::Result<()> {
     let cwd = env::current_dir()?;
     let gitignore_path = cwd.join(".gitignore");
     let gitignore_file = if gitignore_path.is_file() {
-        Some(gitignore::File::new(&gitignore_path).map_err(io::Error::other)?)
+        let (gitignore, err) = Gitignore::new(&gitignore_path);
+        if let Some(e) = err {
+            return Err(io::Error::other(e));
+        }
+        Some(gitignore)
     } else {
         None
     };
@@ -18,16 +24,17 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-/// simpler type signature for internal use
-type Gitignore<'a> = Option<&'a gitignore::File<'a>>;
-
 /// Deletes empty directories under `dir`, depth-first. Never removes `root` itself.
 /// Returns true if the directory was removed.
 ///
 /// # Errors
 ///
 /// Returns [`io::Error`] when any file operation fails.
-pub fn remove_empty_descendants(dir: &Path, root: &Path, gitignore: Gitignore) -> io::Result<bool> {
+pub fn remove_empty_descendants(
+    dir: &Path,
+    root: &Path,
+    gitignore: Option<&Gitignore>,
+) -> io::Result<bool> {
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
     let mut child_dirs = Vec::new();
@@ -66,7 +73,7 @@ pub fn remove_empty_descendants(dir: &Path, root: &Path, gitignore: Gitignore) -
 }
 
 /// indicates whether the given directory should be skipped
-fn skip_directory(path: &Path, gitignore: Gitignore) -> bool {
+fn skip_directory(path: &Path, gitignore: Option<&Gitignore>) -> bool {
     let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
         return false;
     };
@@ -76,5 +83,5 @@ fn skip_directory(path: &Path, gitignore: Gitignore) -> bool {
     let Some(gitignore) = gitignore else {
         return false;
     };
-    gitignore.is_excluded(path).unwrap_or(false)
+    gitignore.matched(path, true).is_ignore()
 }
