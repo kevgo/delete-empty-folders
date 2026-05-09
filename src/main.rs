@@ -10,11 +10,15 @@ pub const SKIP_DIR_NAMES: &[&str] = &[".git"];
 
 fn main() -> io::Result<()> {
     // skip the path to the executable
-    if let Some(flag) = env::args().nth(1)
-        && (flag == "--help" || flag == "-h")
-    {
-        print_help();
-        return Ok(());
+    if let Some(flag) = env::args().nth(1) {
+        if flag == "--help" || flag == "-h" {
+            print_help();
+            return Ok(());
+        }
+        if flag == "--version" || flag == "-V" {
+            print_version();
+            return Ok(());
+        }
     }
     let cwd = env::current_dir()?;
     let gitignore_path = cwd.join(".gitignore");
@@ -99,4 +103,8 @@ fn print_help() {
 
 Usage: delete-empty-folders"
     );
+}
+
+fn print_version() {
+    println!("delete-empty-folders {}", env!("CARGO_PKG_VERSION"));
 }
