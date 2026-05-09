@@ -8,14 +8,11 @@
   "steps": [
     "^a folder with contents:$",
     "^a .gitignore file with contents:$",
-    "^running delete-empty-folders$",
+    "^running \".*\"$",
     "^it prints:$",
     "^it prints nothing$",
     "^the workspace contains:$",
     "^the workspace is empty$",
     "^the workspace is unchanged$"
-  ],
-  "unknown-steps": [
-    "^running \".*\"$"
   ]
 }
