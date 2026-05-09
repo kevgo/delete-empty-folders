@@ -100,11 +100,11 @@ async fn running(world: &mut DeleteWorld, text: String) {
         panic!("unexpected command: {}", cmd);
     }
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
-    let mut cmd = Command::new(delete_empty_folders_executable());
+    let mut command = Command::new(delete_empty_folders_executable());
     if let Some(arg) = arg {
-        cmd.arg(arg);
+        command.arg(arg);
     }
-    let output = cmd
+    let output = command
         .current_dir(&world.dir)
         .output()
         .await
