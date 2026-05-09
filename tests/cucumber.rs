@@ -90,7 +90,7 @@ fn delete_empty_folders_executable() -> PathBuf {
         .join(format!("delete-empty-folders{}", env::consts::EXE_SUFFIX))
 }
 
-#[when(expr = "running delete-empty-folders")]
+#[when(expr = r#"running "delete-empty-folders{options}""#)]
 async fn running(world: &mut DeleteWorld) {
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
     world.output = Some(
