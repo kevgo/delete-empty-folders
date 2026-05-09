@@ -9,6 +9,13 @@ use ignore::gitignore::Gitignore;
 pub const SKIP_DIR_NAMES: &[&str] = &[".git"];
 
 fn main() -> io::Result<()> {
+    // skip the path to the executable
+    if let Some(flag) = env::args().nth(1)
+        && (flag == "--help" || flag == "-h")
+    {
+        print_help();
+        return Ok(());
+    }
     let cwd = env::current_dir()?;
     let gitignore_path = cwd.join(".gitignore");
     let gitignore_file = if gitignore_path.is_file() {
@@ -84,4 +91,12 @@ fn skip_directory(path: &Path, gitignore: Option<&Gitignore>) -> bool {
         return false;
     };
     gitignore.matched(path, true).is_ignore()
+}
+
+fn print_help() {
+    println!(
+        r"Deletes all empty directories in the current directory and its subdirectories.
+
+Usage: delete-empty-folders"
+    );
 }
