@@ -3,7 +3,7 @@ Feature: Does not delete non-empty folders
   Scenario: folder contains a file
     Given a folder with contents:
       | FILE | folder/file.txt |
-    When running delete-empty-folders
+    When running "delete-empty-folders"
     Then it prints nothing
     And the workspace is unchanged
 
@@ -11,7 +11,7 @@ Feature: Does not delete non-empty folders
     Given a folder with contents:
       | FILE   | folder/file.txt        |
       | FOLDER | folder/empty_subfolder |
-    When running delete-empty-folders
+    When running "delete-empty-folders"
     Then it prints:
       """
       removing empty directory: folder/empty_subfolder

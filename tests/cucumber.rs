@@ -98,7 +98,7 @@ async fn running(world: &mut DeleteWorld) {
             .current_dir(&world.dir)
             .output()
             .await
-            .expect("cannot find the 'delete-empty-folders' executable"),
+            .expect(r#"cannot find the "delete-empty-folders" executable"#),
     );
     assert!(world.exit_status().success());
 }
@@ -116,20 +116,20 @@ fn it_prints_nothing(world: &mut DeleteWorld) {
     assert_eq!(have.trim(), "");
 }
 
-#[then(expr = "the workspace is empty")]
+#[then("the workspace is empty")]
 async fn workspace_is_empty(world: &mut DeleteWorld) {
     let mut entries = fs::read_dir(&world.dir).await.unwrap();
     assert!(entries.next_entry().await.unwrap().is_none());
 }
 
-#[then(expr = "the workspace is unchanged")]
+#[then("the workspace is unchanged")]
 async fn workspace_is_unchanged(world: &mut DeleteWorld) {
     let mut entries = vec![];
     load_dir_contents(&world.dir, &mut entries).await;
     assert_eq!(entries, world.initial_contents);
 }
 
-#[then(expr = "the workspace contains:")]
+#[then("the workspace contains:")]
 async fn workspace_contains(world: &mut DeleteWorld, step: &Step) {
     let mut want = vec![];
     let table = step.table.as_ref().unwrap();
