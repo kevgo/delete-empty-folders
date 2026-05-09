@@ -90,16 +90,26 @@ fn delete_empty_folders_executable() -> PathBuf {
         .join(format!("delete-empty-folders{}", env::consts::EXE_SUFFIX))
 }
 
-#[when("running delete-empty-folders")]
-async fn running(world: &mut DeleteWorld) {
+#[when(expr = "running {string}")]
+async fn running(world: &mut DeleteWorld, text: String) {
+    let (cmd, arg) = match text.split_once(' ') {
+        Some((cmd, arg)) => (cmd, Some(arg)),
+        None => (text.as_str(), None),
+    };
+    if cmd != "delete-empty-folders" {
+        panic!("unexpected command: {}", cmd);
+    }
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
-    world.output = Some(
-        Command::new(delete_empty_folders_executable())
-            .current_dir(&world.dir)
-            .output()
-            .await
-            .expect("cannot find the 'delete-empty-folders' executable"),
-    );
+    let mut cmd = Command::new(delete_empty_folders_executable());
+    if let Some(arg) = arg {
+        cmd.arg(arg);
+    }
+    let output = cmd
+        .current_dir(&world.dir)
+        .output()
+        .await
+        .expect("cannot find the 'delete-empty-folders' executable");
+    world.output = Some(output);
     assert!(world.exit_status().success());
 }
 
