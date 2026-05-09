@@ -5,7 +5,7 @@ Feature: Deletes empty folders
       | FOLDER | folderA/folder1 |
       | FOLDER | folderA/folder2 |
       | FOLDER | folderA/folder3 |
-    When running delete-empty-folders
+    When running "delete-empty-folders"
     Then it prints:
       """
       removing empty directory: folderA/folder1
@@ -18,7 +18,7 @@ Feature: Deletes empty folders
   Scenario: nested empty folders
     Given a folder with contents:
       | FOLDER | folder1/folder2/folder3/folder4 |
-    When running delete-empty-folders
+    When running "delete-empty-folders"
     Then it prints:
       """
       removing empty directory: folder1/folder2/folder3/folder4
