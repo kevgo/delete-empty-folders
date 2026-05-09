@@ -17,4 +17,3 @@ Feature: Prints help
       
       Usage: delete-empty-folders
       """
-    Given a folder with contents
