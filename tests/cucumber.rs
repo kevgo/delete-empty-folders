@@ -52,7 +52,7 @@ impl DeleteWorld {
     fn output(&self) -> Cow<'_, str> {
         match &self.output {
             Some(output) => String::from_utf8_lossy(&output.stdout),
-            None => Default::default(),
+            None => Cow::default(),
         }
     }
 }
