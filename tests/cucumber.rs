@@ -69,8 +69,8 @@ async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
                 fs::write(&path, "x".as_bytes()).await.unwrap();
             }
             "FOLDER" => fs::create_dir_all(path).await.unwrap(),
-            other => panic!("unexpected entry type: {}", other),
-        };
+            other => panic!("unexpected entry type: {other}"),
+        }
     }
 }
 
