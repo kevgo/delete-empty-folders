@@ -187,7 +187,7 @@ fn load_dir_contents<'a>(
             } else if file_type.is_file() {
                 result.push(FSEntry::File(entry.path()));
             } else {
-                panic!("unexpected file type: {:?}", file_type);
+                panic!("unexpected file type: {file_type:?}");
             }
         }
     })
