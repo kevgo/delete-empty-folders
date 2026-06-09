@@ -114,7 +114,7 @@ async fn running(world: &mut DeleteWorld, text: String) {
 #[then("it prints:")]
 fn it_prints(world: &mut DeleteWorld, step: &Step) {
     let want = step.docstring.as_ref().unwrap();
-    let have = world.output().replace("\\", "/");
+    let have = world.output().replace('\\', "/");
     pretty::assert_eq!(have.trim(), want.trim());
 }
 
