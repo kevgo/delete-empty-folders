@@ -20,6 +20,7 @@ help:  # shows all available Make commands
 
 lint:  # run all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
+	cargo clippy --test=cucumber --all-features -- --deny=warnings
 	$(CUCUMBER_SORT) check
 	$(RUMDL) check
 

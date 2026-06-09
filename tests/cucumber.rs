@@ -52,7 +52,7 @@ impl DeleteWorld {
     fn output(&self) -> Cow<'_, str> {
         match &self.output {
             Some(output) => String::from_utf8_lossy(&output.stdout),
-            None => Default::default(),
+            None => Cow::default(),
         }
     }
 }
@@ -69,8 +69,8 @@ async fn a_folder_with(world: &mut DeleteWorld, step: &Step) {
                 fs::write(&path, "x".as_bytes()).await.unwrap();
             }
             "FOLDER" => fs::create_dir_all(path).await.unwrap(),
-            other => panic!("unexpected entry type: {}", other),
-        };
+            other => panic!("unexpected entry type: {other}"),
+        }
     }
 }
 
@@ -96,9 +96,7 @@ async fn running(world: &mut DeleteWorld, text: String) {
         Some((cmd, arg)) => (cmd, Some(arg)),
         None => (text.as_str(), None),
     };
-    if cmd != "delete-empty-folders" {
-        panic!("unexpected command: {}", cmd);
-    }
+    assert!(cmd == "delete-empty-folders", "unexpected command: {cmd}");
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
     let mut command = Command::new(delete_empty_folders_executable());
     if let Some(arg) = arg {
@@ -116,7 +114,7 @@ async fn running(world: &mut DeleteWorld, text: String) {
 #[then("it prints:")]
 fn it_prints(world: &mut DeleteWorld, step: &Step) {
     let want = step.docstring.as_ref().unwrap();
-    let have = world.output().replace("\\", "/");
+    let have = world.output().replace('\\', "/");
     pretty::assert_eq!(have.trim(), want.trim());
 }
 
@@ -148,7 +146,7 @@ async fn workspace_contains(world: &mut DeleteWorld, step: &Step) {
         let entry = match row[0].as_str() {
             "FILE" => FSEntry::File(path),
             "FOLDER" => FSEntry::Folder(path),
-            other => panic!("unexpected entry type: {}", other),
+            other => panic!("unexpected entry type: {other}"),
         };
         want.push(entry);
     }
@@ -169,7 +167,7 @@ fn tmp_dir() -> PathBuf {
         .map(char::from)
         .collect();
     let cwd = env::current_dir().expect("cannot determine the current directory");
-    let dir = cwd.join("tmp").join(format!("{}-{}", timestamp, rand));
+    let dir = cwd.join("tmp").join(format!("{timestamp}-{rand}"));
     std::fs::create_dir_all(&dir).unwrap();
     dir
 }
@@ -189,7 +187,7 @@ fn load_dir_contents<'a>(
             } else if file_type.is_file() {
                 result.push(FSEntry::File(entry.path()));
             } else {
-                panic!("unexpected file type: {:?}", file_type);
+                panic!("unexpected file type: {file_type:?}");
             }
         }
     })
