@@ -167,7 +167,7 @@ fn tmp_dir() -> PathBuf {
         .map(char::from)
         .collect();
     let cwd = env::current_dir().expect("cannot determine the current directory");
-    let dir = cwd.join("tmp").join(format!("{}-{}", timestamp, rand));
+    let dir = cwd.join("tmp").join(format!("{timestamp}-{rand}"));
     std::fs::create_dir_all(&dir).unwrap();
     dir
 }
