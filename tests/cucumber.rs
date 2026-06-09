@@ -96,9 +96,7 @@ async fn running(world: &mut DeleteWorld, text: String) {
         Some((cmd, arg)) => (cmd, Some(arg)),
         None => (text.as_str(), None),
     };
-    if cmd != "delete-empty-folders" {
-        panic!("unexpected command: {}", cmd);
-    }
+    assert!(cmd == "delete-empty-folders", "unexpected command: {cmd}");
     load_dir_contents(&world.dir, &mut world.initial_contents).await;
     let mut command = Command::new(delete_empty_folders_executable());
     if let Some(arg) = arg {
