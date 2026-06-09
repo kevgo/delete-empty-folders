@@ -146,7 +146,7 @@ async fn workspace_contains(world: &mut DeleteWorld, step: &Step) {
         let entry = match row[0].as_str() {
             "FILE" => FSEntry::File(path),
             "FOLDER" => FSEntry::Folder(path),
-            other => panic!("unexpected entry type: {}", other),
+            other => panic!("unexpected entry type: {other}"),
         };
         want.push(entry);
     }
