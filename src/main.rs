@@ -1,11 +1,15 @@
 use ignore::gitignore::Gitignore;
 use std::env;
+use std::ffi::OsStr;
 use std::fs;
 use std::io;
 use std::path::Path;
 
 /// Last path segments of directories this tool never recurses into (no listing inside, no deletion there).
 pub const SKIP_DIR_NAMES: &[&str] = &[".git"];
+
+/// treat these directories as non-existent
+pub const IGNORE_NAMES: &[&str] = &["__pycache__"];
 
 fn main() -> io::Result<()> {
     // skip the path to the executable
@@ -48,6 +52,7 @@ pub fn remove_empty_descendants(
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
     let mut child_dirs = Vec::new();
+    let ignore_names: Vec<&OsStr> = IGNORE_NAMES.iter().map(OsStr::new).collect();
     for entry in entries {
         let entry = entry?;
         let Ok(filetype) = entry.file_type() else {
@@ -59,6 +64,11 @@ pub fn remove_empty_descendants(
             continue;
         }
         let path = entry.path();
+        if let Some(file_name) = path.file_name()
+            && ignore_names.contains(&file_name)
+        {
+            continue;
+        }
         if skip_directory(&path, gitignore) {
             has_children = true;
             continue;
@@ -78,7 +88,7 @@ pub fn remove_empty_descendants(
     }
     let relative_path = dir.strip_prefix(root).unwrap_or(dir);
     println!("removing empty directory: {}", relative_path.display());
-    fs::remove_dir(dir)?;
+    fs::remove_dir_all(dir)?;
     Ok(true)
 }
 
