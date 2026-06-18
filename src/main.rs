@@ -1,9 +1,8 @@
+use ignore::gitignore::Gitignore;
 use std::env;
 use std::fs;
 use std::io;
 use std::path::Path;
-
-use ignore::gitignore::Gitignore;
 
 /// Last path segments of directories this tool never recurses into (no listing inside, no deletion there).
 pub const SKIP_DIR_NAMES: &[&str] = &[".git"];
