@@ -4,9 +4,15 @@ CUCUMBER_SORT = $(RTA) cucumber-sort
 RTA = tools/rta@${RTA_VERSION}
 RUMDL = $(RTA) rumdl
 
-cuke:  # run end-to-end tests
+build:  # builds the codebase
+	cargo build
+
+cuke: build  # run end-to-end tests
 	rm -rf tmp
 	cargo test --test=cucumber
+
+cukethis: build  # runs only end-to-end tests with a @this tag
+	cargo test --test=cucumber -- -t @this
 
 fix: ${RTA} # correct all auto-fixable issues
 	cargo +nightly fix --allow-dirty
