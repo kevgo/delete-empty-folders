@@ -1,6 +1,5 @@
 Feature: Deletes folders containing only __pycache__
 
-  @this
   Scenario: folder contains only __pycache__
     Given a folder with contents:
       | FILE | folder/__pycache__/file.pyc |
