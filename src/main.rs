@@ -52,7 +52,7 @@ pub fn remove_empty_descendants(
     let entries = fs::read_dir(dir)?;
     let mut has_children = false;
     let mut child_dirs = Vec::new();
-    let ignore_names: Vec<&OsStr> = IGNORE_NAMES.iter().map(|s| OsStr::new(s)).collect();
+    let ignore_names: Vec<&OsStr> = IGNORE_NAMES.iter().map(OsStr::new).collect();
     for entry in entries {
         let entry = entry?;
         let Ok(filetype) = entry.file_type() else {
@@ -64,10 +64,10 @@ pub fn remove_empty_descendants(
             continue;
         }
         let path = entry.path();
-        if let Some(file_name) = path.file_name() {
-            if ignore_names.contains(&file_name) {
-                continue;
-            }
+        if let Some(file_name) = path.file_name()
+            && ignore_names.contains(&file_name)
+        {
+            continue;
         }
         if skip_directory(&path, gitignore) {
             has_children = true;
